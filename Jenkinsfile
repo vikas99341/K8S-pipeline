@@ -10,7 +10,7 @@ pipeline {
         stage('SCM Checkout') { 
             steps {
                 git credentialsId: 'github', 
-                    url: 'https://github.com/vikas99341/dockeransiblejenkins'
+                    url: 'https://github.com/vikas99341/K8S-pipeline.git'
             }
         }
         stage('Maven Clean Build Package') { 
