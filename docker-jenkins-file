@@ -1,0 +1,37 @@
+pipeline {
+    agent any 
+	tools {
+		maven 'Maven home'
+		}
+    stages {
+        stage('SCM-Checkout') { 
+            steps {
+                git branch: 'main', credentialsId: 'git-hub-credentials', 
+				url: 'https://github.com/vikas99341/K8S-pipeline.git' 
+            }
+        }
+        stage('Maven-Clean-Compile') { 
+            steps {
+                sh 'mvn clean compile' 
+            }
+        }
+        stage('Maven-Package') { 
+            steps {
+                sh 'mvn package' 
+            }
+        }
+        stage('Docker-build') { 
+            steps {
+                sh 'docker build . -t vikas24775/jenkins-tomcat:9.0 ' 
+            }
+        }
+        stage('Docker-push') { 
+            steps {
+				withCredentials([string(credentialsId: 'dockerHubPwd', variable: 'dockerHubPwd')]) {
+					sh 'docker login -u vikas24775 -p ${dockerHubPwd}'
+				}
+                sh 'docker push vikas24775/jenkins-tomcat:9.0 ' 
+            }
+        }
+    }
+}
