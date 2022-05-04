@@ -31,22 +31,6 @@ pipeline {
 			sh 'docker push vikas24775/nodeapp:${DOCKER_TAG}'
             }
         }
-        stage('Deploy to k8s'){
-            steps{
-              sh "chmod +x changeTag.sh"
-              sh "./changeTag.sh ${DOCKER_TAG}"
-			  sshagent(['k8s-ssh-key']) {
-					sh "scp -o StrictHostKeyChecking=no services.yml node-app-pod.yml ec2-user@54.82.90.32:/home/ec2-user/"
-					script{
-						try{
-							sh "ssh ec2-user@54.82.90.32 kubectl apply -f ."
-						}catch(error){
-							sh "ssh ec2-user@54.82.90.32 kubectl create -f ."
-						}
-					}
-				}
-            }
-        }
     }
 }
 def getVersion(){
