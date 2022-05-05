@@ -1,9 +1,9 @@
    pipeline {
     agent any
     tools {
-	maven 'Maven home'
+		maven 'Maven home'
 	}
-    environment {
+	environment {
       DOCKER_TAG = getVersion()
     }
     stages {
@@ -29,6 +29,16 @@
 					sh 'docker login -u vikas24775 -p ${dockerHubPwd}'
 				}
 			sh 'docker push vikas24775/nodeapp:${DOCKER_TAG}'
+            }
+        }
+        stage('Deploy to k8s'){
+            steps{
+              sh "chmod +x changeTag.sh"
+              sh "./changeTag.sh ${DOCKER_TAG}"
+			  sshagent(['K8S-Mgmt-Node']) {
+					sh "scp -o StrictHostKeyChecking=no services.yml node-app-pod.yml ec2-user@54.208.14.246:/home/ec2-user"
+                    sh "ssh ec2-user@54.208.14.246 kubectl apply -f ."
+				}
             }
         }
     }
