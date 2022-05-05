@@ -33,11 +33,11 @@ pipeline {
         }
         stage('Deploy to k8s'){
             steps{
-              sh "chmod +x changeTag.sh"
+              sh "chmod +x achangeTag.sh"
               sh "./changeTag.sh ${DOCKER_TAG}"
-			  sshagent(['kops-ubuntu-admin']) {
-					sh "scp -o StrictHostKeyChecking=no services.yml node-app-pod.yml ubuntu@3.83.231.80:/home/ubuntu/"
-                    sh "ssh ubuntu@3.83.231.80 kubectl apply -f ."
+			  sshagent(['kops-machine']) {
+					sh "scp -o StrictHostKeyChecking=no services.yml node-app-pod.yml ec2-user@54.198.142.180:/home/ec2-user"
+                    sh "ssh ec2-user@54.198.142.180 kubectl apply -f ."
 				}
             }
         }
