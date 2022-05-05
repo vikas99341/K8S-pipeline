@@ -1,9 +1,9 @@
    pipeline {
     agent any
     tools {
-		maven 'Maven home'
+	maven 'Maven home'
 	}
-	environment {
+    environment {
       DOCKER_TAG = getVersion()
     }
     stages {
