@@ -31,9 +31,19 @@ pipeline {
 			sh 'docker push vikas24775/nodeapp:${DOCKER_TAG}'
             }
         }
+        stage('Deploy to k8s'){
+            steps{
+              sh "chmod +x changeTag.sh"
+              sh "./changeTag.sh ${DOCKER_TAG}"
+			  sshagent(['kops-ubuntu-admin']) {
+					sh "scp -o StrictHostKeyChecking=no services.yml node-app-pod.yml ubuntu@3.83.231.80:/home/ubuntu/"
+                    sh "ssh ubuntu@3.83.231.80 kubectl apply -f ."
+				}
+            }
+        }
+
     }
 }
-
 def getVersion(){
     def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'
     return commitHash
