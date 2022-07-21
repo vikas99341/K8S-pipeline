@@ -1,0 +1,31 @@
+
+pipeline {
+    agent any
+    tools {
+		maven 'mvn-home'
+	}
+	
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'git-cred', 
+				url: 'https://github.com/vikas99341/K8S-pipeline.git'
+            }
+        }
+        stage('maven compile') {
+            steps {
+                sh "mvn clean package "
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                sh "docker build . -t vikas99341/cust-tomcat:1.0"
+            }
+        }
+        stage('Ansible deployment') {
+            steps {
+                ansiblePlaybook credentialsId: 'dev-server', disableHostKeyChecking: true, installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
+            }
+        }
+    }
+}
