@@ -6,15 +6,10 @@
       yum:
         name: python-pip
         state: present
-    - name: Install docker
+    - name: uninstall docker
       yum:
         name: docker
-        state: present
-    - name: start docker
-      service:
-        name: docker
-        state: started
-        enabled: yes
+        state: absent
     - name: Install docker-py python module
       pip:
         name: docker-py
