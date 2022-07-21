@@ -19,10 +19,3 @@
       pip:
         name: docker-py
         state: present
-    - name: Start the container
-      docker_container:
-        name: nodeapp
-        image: "vikas99341/cust-tomcat:1.0"
-        state: started
-        published_ports:
-          - 0.0.0.0:8080:8080
